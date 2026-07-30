@@ -1,0 +1,98 @@
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+framework_version: 3.1.8
+serverless_language: node
+polling_url: "https://reg.bom.gov.au/products/{{ radar_id }}{{ zoom_1 }}.loop.shtml?c={{ home_lat }},{{ home_lon }},{{ site_lat }},{{ site_lon }}\r\nhttps://reg.bom.gov.au/products/{{ radar_id }}{{ zoom_2 }}.loop.shtml"
+polling_headers: ''
+polling_body: ''
+id: 398924
+oauth_enabled: 'false'
+oauth_pkce_enabled: 'no'
+oauth_authorize_url: ''
+oauth_token_url: ''
+oauth_scopes: ''
+oauth_scope_separator: ''
+oauth_refresh_url: ''
+oauth_auth_params: ''
+oauth_token_headers: ''
+oauth_token_site: ''
+oauth_token_params: ''
+oauth_token_request_auth_method: ''
+oauth_body_format: ''
+oauth_token_response_metadata: ''
+oauth_authorization_method: ''
+oauth_refresh_params: ''
+oauth_token_field_name: ''
+oauth_expiry_field_name: ''
+oauth_expiry_strategy: ''
+oauth_fixed_expiry_ms: ''
+custom_fields:
+- keyname: radar_id
+  field_type: string
+  name: Radar station
+  description: BOM radar product base ID
+  help_text: First 5 characters of the product ID, e.g. IDR01 = Melbourne (Broadmeadows), IDR66 = Brisbane (Mt Stapylton), IDR71 = Sydney (Terrey Hills). Find yours in the <a href='https://reg.bom.gov.au/australia/radar/' target='_blank'>BOM radar directory</a>.
+  placeholder: IDR01
+  default: IDR01
+- keyname: zoom_1
+  field_type: select
+  name: Left map range
+  description: Coverage radius of the first map
+  options:
+  - 512 km: '1'
+  - 256 km: '2'
+  - 128 km: '3'
+  - 64 km: '4'
+  default: '3'
+- keyname: zoom_2
+  field_type: select
+  name: Right map range
+  description: Coverage radius of the second map (full-screen layout shows both maps)
+  options:
+  - 512 km: '1'
+  - 256 km: '2'
+  - 128 km: '3'
+  - 64 km: '4'
+  default: '2'
+- keyname: station_name
+  field_type: string
+  name: Station name
+  description: Display name for the title bar
+  placeholder: Melbourne (Broadmeadows)
+  default: Melbourne (Broadmeadows)
+- keyname: home_lat
+  field_type: string
+  name: Home latitude
+  description: Decimal degrees. Where the crosshair goes — your house, or somewhere fun (default points at Luna Park's laughing face). Enter 0 in all four coordinate fields to disable panning and keep the radar centred.
+  placeholder: "-37.8679"
+  default: "-37.8679"
+- keyname: home_lon
+  field_type: string
+  name: Home longitude
+  description: Decimal degrees. Enter 0 in all four coordinate fields to disable panning.
+  placeholder: '144.9741'
+  default: '144.9741'
+- keyname: site_lat
+  field_type: string
+  name: Radar site latitude
+  description: Decimal degrees; required for home-centred panning — find it on the station's page in the <a href='https://reg.bom.gov.au/australia/radar/' target='_blank'>BOM radar directory</a>. Enter 0 in all four coordinate fields to disable panning. Invalid or out-of-coverage coordinates safely disable panning rather than breaking the display.
+  placeholder: "-37.6899"
+  default: "-37.6899"
+- keyname: site_lon
+  field_type: string
+  name: Radar site longitude
+  description: Decimal degrees. Enter 0 in all four coordinate fields to disable panning.
+  placeholder: '144.9473'
+  default: '144.9473'
+- keyname: author_bio
+  field_type: author_bio
+  name: BOM Rain Radar
+  category: environment,nature
+  description: Displays the rain radar from the Australian Bureau of Meteorology (BOM)
+  email_address: david@goodlad.net
+name: BOM Radar
+refresh_interval: 15
