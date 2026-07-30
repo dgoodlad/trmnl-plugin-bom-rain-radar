@@ -1,0 +1,33 @@
+{% assign station = trmnl.plugin_settings.custom_fields_values.station_name | default: "" %}
+{% if station == "" %}{% assign station = "BOM Radar" %}{% endif %}
+{% if status == "ok" %}
+<div class="layout layout--row layout--center gap bomr-stack">
+  {% for r in radars %}
+  {% if r.ok %}
+  <div class="bg--white border bomr-map bomr-map--380 bomr-pan-{{ r.id }}">
+    <img class="image bomr-layer bomr-coast" src="{{ r.bg_url }}" onerror="this.style.display='none'" />
+    <img class="image image-dither bomr-layer bomr-water" src="{{ r.water_url }}" onerror="this.style.display='none'" />
+    <img class="image image-dither bomr-layer bomr-rain" src="{{ r.frame_url }}" onerror="this.style.display='none'" />
+    <img class="image bomr-layer" src="{{ r.range_url }}" onerror="this.style.display='none'" />
+    {% if r.show_home %}
+    <div class="bg--white bomr-x bomr-x--halo-h"></div>
+    <div class="bg--white bomr-x bomr-x--halo-v"></div>
+    <div class="bg--black bomr-x bomr-x--h"></div>
+    <div class="bg--black bomr-x bomr-x--v"></div>
+    {% endif %}
+    <span class="label label--inverted bomr-tag">{{ r.label }}</span>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<div class="layout layout--col layout--center gap">
+  <span class="value value--large">{{ status_message }}</span>
+  <span class="description">Check <a href="https://reg.bom.gov.au/radar">reg.bom.gov.au/radar</a> for station status and nearby radars.</span>
+</div>
+{% endif %}
+<div class="title_bar">
+  <img class="image" src="data:image/png;base64,{{ bomr_icon }}" />
+  <span class="title">BOM Radar</span>
+  <span class="instance" data-clamp="1">{{ station }} &middot; {{ frame_time_local }}</span>
+</div>

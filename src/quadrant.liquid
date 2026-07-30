@@ -1,0 +1,25 @@
+{% assign live = radars | where: "ok", true %}
+{% assign r = live | first %}
+{% if status == "ok" and r %}
+<div class="layout layout--row layout--center gap">
+  <div class="bg--white border bomr-map bomr-map--170 bomr-pan-{{ r.id }}">
+    <img class="image bomr-layer bomr-coast" src="{{ r.bg_url }}" onerror="this.style.display='none'" />
+    <img class="image image-dither bomr-layer bomr-rain" src="{{ r.frame_url }}" onerror="this.style.display='none'" />
+    <img class="image bomr-layer" src="{{ r.range_url }}" onerror="this.style.display='none'" />
+    {% if r.show_home %}
+    <div class="bg--white bomr-x bomr-x--halo-h"></div>
+    <div class="bg--white bomr-x bomr-x--halo-v"></div>
+    <div class="bg--black bomr-x bomr-x--h"></div>
+    <div class="bg--black bomr-x bomr-x--v"></div>
+    {% endif %}
+  </div>
+  <div class="flex flex--col">
+    <span class="value value--large" data-fit-value="true">{{ r.time }}</span>
+    <span class="label label--gray 1bit:text--black">{{ r.label }}</span>
+  </div>
+</div>
+{% else %}
+<div class="layout layout--col layout--center">
+  <span class="title">Radar offline</span>
+</div>
+{% endif %}

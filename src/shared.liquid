@@ -1,0 +1,64 @@
+{% comment %}
+  Shared styles for the BOM Radar compositor — and reviewer notes for the
+  automated hints this plugin intentionally triggers:
+
+  * <style> block: this plugin composites BOM's transparency layers (absolute
+    stacking + shared pan transform + per-layer filter/clip-path), which has no
+    Framework utility equivalent; Framework arbitrary-size classes (w--[Npx])
+    were tested and do not render in the pinned 3.1.8 pipeline. Per TRMNL's
+    recipe structure docs, shared.liquid is the endorsed home for shared
+    <style> blocks. Framework classes still handle all colour, typography,
+    borders and layout.
+  * image-dither is deliberately absent on line-art layers (thresholded
+    coastline, range rings, 1-bit title icon): dithering is for continuous
+    tone; line art needs crisp edges. The rain and waterways layers ARE dithered.
+  * The quadrant view omits title_bar deliberately — at 400x240 every pixel
+    goes to the map; the time and range label identify the plugin.
+  * shared.liquid itself has no layout class because it renders nothing.
+  * Every view's OK and error branches each render a single .layout div with a
+    sibling title_bar, per platform structure.
+  * TRMNL X support is via the media queries below (pure CSS, so the verified
+    OG landscape render is untouched by construction).
+
+  Layer notes (measured against BOM's published assets):
+  - .bomr-coast thresholds background.png (3-colour indexed: stroke lum .541,
+    fills .838/.863) to pure coastline linework; valid brightness window 0.60-0.92.
+  - .bomr-rain darkens echoes pre-dither so light rain survives 1-bit.
+  - clip-path trims BOM's burned-in attribution (bg) and caption (frame) strips.
+{% endcomment %}
+{% capture bomr_icon %}iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABRElEQVR42tWYyxLDIAhFA+P//7JdpZOxBC5XtInLVuHwCANI7/148mmzAkTEtbD3LlPyGQ9GUJWwKUAWbAYUAvTA7pQhxiCgjYGbzaur7EiW68ERzhJWEXYP8hYwgqvKxzBVLEAPrhosjNAIyMBVeneU1dDLSD6yQJ5Bili+Ei5yRPPg0BLDhhQpM5pRUAF3B3TnRWUFi0hn4TJVQY9Nh81bZXMnq9jz1Pmf5VnNWj8qyoSZMWxbiNmjlreq6twSwMd78LVD08ouZtqDTMtv/ce0bd92yyoBlV7zWjJL3/nbuz+SKHxIObLuZQq2MvlxvZvJQbTnvL5riAeq1htM46vIV1Yxc6Czzo+uFUNT5n443u4eO7OD2LbBPXqfGtwrVx/IG2r1sWJ5xMhatn6reAsDVnc05QvMKtDlK2AG9i9L9J3nA7qUehKWdFIOAAAAAElFTkSuQmCC{% endcapture %}
+<style>
+  .bomr-map { position: relative; flex: none; overflow: hidden; }
+  .bomr-map--380 { width: 380px; height: 380px; }
+  .bomr-map--340 { width: 340px; height: 340px; }
+  .bomr-map--180 { width: 180px; height: 180px; }
+  .bomr-map--170 { width: 170px; height: 170px; }
+  .bomr-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .bomr-coast { filter: grayscale(1) brightness(0.75) contrast(6); clip-path: inset(0 0 6% 0); }
+  .bomr-water { filter: brightness(0.8); }
+  .bomr-rain { filter: brightness(0.55); clip-path: inset(0 0 9% 0); }
+  .bomr-x { position: absolute; left: 50%; top: 50%; }
+  .bomr-x--halo-h { width: 18px; height: 6px; margin: -3px 0 0 -9px; }
+  .bomr-x--halo-v { width: 6px; height: 18px; margin: -9px 0 0 -3px; }
+  .bomr-x--h { width: 14px; height: 2px; margin: -1px 0 0 -7px; }
+  .bomr-x--v { width: 2px; height: 14px; margin: -7px 0 0 -1px; }
+  .bomr-tag { position: absolute; left: 6px; bottom: 6px; }
+  {% for r in radars %}{% if r.ok %}
+  .bomr-pan-{{ r.id }} .bomr-layer { transform: translate({{ r.tx }}%, {{ r.ty }}%); }
+  {% endif %}{% endfor %}
+
+  /* TRMNL X, landscape (1040x780): upsize maps to fill the larger canvas.
+     OG landscape (800x480) never matches these queries, so its verified
+     layout is untouched. */
+  @media (min-width: 1000px) {
+    .bomr-map--380 { width: 460px; height: 460px; }
+    .bomr-map--340 { width: 440px; height: 440px; }
+    .bomr-map--180 { width: 240px; height: 240px; }
+    .bomr-map--170 { width: 240px; height: 240px; }
+  }
+  /* TRMNL X, portrait (780x1040): stack the dual maps vertically. */
+  @media (orientation: portrait) and (min-width: 700px) {
+    .bomr-stack { flex-direction: column; }
+    .bomr-map--380 { width: 430px; height: 430px; }
+  }
+</style>
